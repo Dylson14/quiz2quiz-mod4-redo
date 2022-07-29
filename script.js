@@ -1,19 +1,85 @@
-console.log("Dylson, this is working!")
-firstSetEl = document.getElementById("first-set");
-secondSetEl = document.getElementById("second-set");
-thirdSetEl = document.getElementById("third-set");
+firstSetEl = document.getElementById("firstQuestionSet");
+secondSetEl = document.getElementById("secondQuestionSet");
+thirdSetEl = document.getElementById("thirdQuestionSet");
+startBtnEl = document.getElementById("startBtn");
+timerEl = document.getElementById("timer");
+headerEl = document.getElementById("header");
+scoreEl = document.getElementById("score");
 
-// // Dynamically creating the question headers
-var questionHeader = document.createElement("h2");
-questionHeader.setAttribute("data-number", "");
-questionHeader.textContent = "This is where the questions will go"
-firstSetEl.appendChild(questionHeader);
-secondSetEl.appendChild(questionHeader);
+// By default I want to hide all the questions
+firstSetEl.classList.add("hide");
+firstSetEl.dataset.display = "hide";
+// *------*
+secondSetEl.classList.add("hide");
+secondSetEl.dataset.display = "hide";
+// *------*
+thirdSetEl.classList.add("hide");
+thirdSetEl.dataset.display = "hide";
 
-// Dynamically creating the true button
-var trueBtnEl = document.createElement("button");
-trueBtnEl.setAttribute("type","button");
-trueBtnEl.setAttribute("class","btn btn-info");
-trueBtnEl.textContent="True";
-firstSetEl.appendChild(trueBtnEl);
-secondSetEl.appendChild(trueBtnEl);
+var timeLeft = 30;
+var isActive = true;
+var scoreBoard = 0;
+
+(scoreEl.textContent = "Your Score :"), scoreBoard;
+
+function startTimer() {
+  var timeInterval = setInterval(function () {
+    if (timeLeft > 0 && isActive) {
+      timeLeft--;
+      timerEl.textContent = "time remaining : " + timeLeft;
+    } else {
+      clearInterval(timeInterval);
+    }
+  }, 1000);
+}
+
+function endGame() {
+  isActive = false;
+  thirdSetEl.classList.add("hide");
+  thirdSetEl.dataset.display = "hide";
+
+  // stops the timer
+  // brings up the text area
+  // saves the score to the localstorage
+}
+
+function showThirdQuestions(event) {
+  console.log("third time around :", event.target.dataset.correct);
+
+
+  secondSetEl.classList.add("hide");
+  secondSetEl.dataset.display = "hide";
+  // ------
+  thirdSetEl.classList.remove("hide");
+  thirdSetEl.dataset.display = "show";
+
+  thirdSetEl.addEventListener("click", endGame);
+}
+
+function showSecondQuestions(event) {
+  if (event.target.dataset.correct === "isAnswer") {
+    scoreBoard++;
+    scoreEl.textContent = "Your Score : " + scoreBoard;
+  }else{
+    scoreBoard = scoreBoard - 2;
+    scoreEl.textContent = "Your Score : " + scoreBoard;
+  }
+  firstSetEl.classList.add("hide");
+  firstSetEl.dataset.display = "hide";
+  // ------
+  secondSetEl.classList.remove("hide");
+  secondSetEl.dataset.display = "show";
+
+  secondSetEl.addEventListener("click", showThirdQuestions);
+}
+
+function startGame(event) {
+  console.log("this is the first time :" + event);
+  startTimer();
+  headerEl.classList.add("hide");
+  firstSetEl.classList.remove("hide");
+  firstSetEl.dataset.display = "show";
+  firstSetEl.addEventListener("click", showSecondQuestions);
+}
+
+startBtnEl.addEventListener("click", startGame);
